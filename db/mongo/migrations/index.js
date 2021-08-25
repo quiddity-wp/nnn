@@ -1,7 +1,8 @@
+const admin = db.getSiblingDB("admin");
 const nnn = db.getSiblingDB("nnn");
 
 // Update this with the latest migration number.
-const currentMigration = 1;
+const currentMigration = 0;
 
 // Check to see if the migration collection exists yet.  If not, create it.
 const found = nnn.getCollectionInfos({name: "migration"}).length;
@@ -36,3 +37,5 @@ if (migration.current < currentMigration) {
         nnn.migration.findOneAndUpdate({}, {$set: {current: NumberInt(i)}});
     }
 }
+
+admin.shutdownServer();

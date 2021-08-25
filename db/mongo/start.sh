@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ $USE_AZURE_FILE_STORAGE -eq 1 ];
+then
+    # Mount Azure Storage file share.
+    mount -t cifs $(cat $DB_FILES_URI) /data/db -o vers=3.0,username=$(cat $DB_FILES_USERNAME),password=$(cat $DB_FILES_PASSWORD),dir_mode=0755,file_mode=0755,serverino,uid=mongodb,gid=mongodb
+fi
+
 if [ -f /data/db/initialized ];
 then
     # Location of temp files to tell us mongod is running.
@@ -12,6 +18,8 @@ then
     # Remove any existing temp file.
     rm -f "$pidfile"
     rm -f "$logfile"
+
+    echo "Starting Mongo for migrations."
 
     # Start mongod.
     mongod --fork --logpath "$logfile" --pidfilepath "$pidfile" --setParameter diagnosticDataCollectionEnabled=false
@@ -39,9 +47,6 @@ then
     "${mongo[@]}" /var/mongo/migrations/index.js
     echo "Migrations complete."
 
-    # Shut down mongod.
-    mongod --shutdown
-
     # Ensure mongod is not running.
     tries=30
     while true; do
@@ -57,9 +62,13 @@ then
         sleep 1
     done
 
+    echo "Mongo shutdown."
+
     # Remove pidfile.
     rm -f "$pidfile"
 fi
+
+echo "Starting Mongo."
 
 # Start up mongod normally.
 /usr/local/bin/docker-entrypoint.sh mongod --setParameter diagnosticDataCollectionEnabled=false
