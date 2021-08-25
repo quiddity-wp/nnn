@@ -34,8 +34,7 @@ class SeasonDb {
     static async get(id) {
         const db = await Db.get();
 
-        /** @type {SeasonTypes.Season} */
-        const data = await db.collection("season").findOne({_id: MongoDb.Long.fromNumber(id)});
+        const data = /** @type {SeasonTypes.Season} */(await db.collection("season").findOne({_id: MongoDb.Long.fromNumber(id)})); // eslint-disable-line no-extra-parens
 
         return data || void 0;
     }
@@ -55,8 +54,7 @@ class SeasonDb {
     static async getFromDate(date) {
         const db = await Db.get();
 
-        /** @type {SeasonTypes.Season} */
-        let data = await db.collection("season").findOne({startDate: {$lte: date}});
+        let data = /** @type {SeasonTypes.Season} */(await db.collection("season").findOne({startDate: {$lte: date}})); // eslint-disable-line no-extra-parens
 
         if (!data) {
             return void 0;
@@ -68,12 +66,12 @@ class SeasonDb {
         let k;
 
         while (!data) {
-            data = await db.collection("season").findOne({
+            data = /** @type {SeasonTypes.Season} */(await db.collection("season").findOne({ // eslint-disable-line no-extra-parens
                 $and: [
                     {startDate: {$lte: date}},
                     {endDate: {$gt: date}}
                 ]
-            });
+            }));
 
             if (!data) {
                 if (!k) {
@@ -93,15 +91,14 @@ class SeasonDb {
                     ]).toArray())[0].K.valueOf();
                 }
 
-                /** @type {{endDate: Date}[]} */
-                const maxSeason = await db.collection("season").aggregate([
+                const maxSeason = /** @type {{endDate: Date}[]} */(await db.collection("season").aggregate([ // eslint-disable-line no-extra-parens
                     {
                         $group: {
                             _id: null,
                             endDate: {$max: "$endDate"}
                         }
                     }
-                ]).toArray();
+                ]).toArray());
 
                 const season = {
                     startDate: maxSeason[0].endDate,
@@ -146,8 +143,7 @@ class SeasonDb {
 
         const db = await Db.get();
 
-        /** @type {{season: number}[]} */
-        const data = await db.collection("season").find().project({_id: 0, season: "$_id"}).sort({_id: 1}).toArray();
+        const data = /** @type {{season: number}[]} */(await db.collection("season").find().project({_id: 0, season: "$_id"}).sort({_id: 1}).toArray()); // eslint-disable-line no-extra-parens
 
         cache = data && data.map((s) => s.season) || [1];
 

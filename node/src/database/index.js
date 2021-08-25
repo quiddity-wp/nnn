@@ -21,6 +21,38 @@ let db;
  * Gets an instance of the database.
  */
 class Db {
+    //   #                     #
+    //  # #                    #
+    //  #    ###    ##   # #   #      ##   ###    ###
+    // ###   #  #  #  #  ####  #     #  #  #  #  #  #
+    //  #    #     #  #  #  #  #     #  #  #  #   ##
+    //  #    #      ##   #  #  ####   ##   #  #  #
+    //                                            ###
+    /**
+     * Converts a value from a MongoDb.Long to a number.
+     * @param {MongoDb.Long|number} val The number.
+     * @returns {number} The number.
+     */
+    static fromLong(val) {
+        return typeof val === "number" ? val : val.toNumber();
+    }
+
+    //  #          #
+    //  #          #
+    // ###    ##   #      ##   ###    ###
+    //  #    #  #  #     #  #  #  #  #  #
+    //  #    #  #  #     #  #  #  #   ##
+    //   ##   ##   ####   ##   #  #  #
+    //                                ###
+    /**
+     * Converts a value from a number to a MongoDb.Long.
+     * @param {MongoDb.Long|number} val The number.
+     * @returns {MongoDb.Long} The number.
+     */
+    static toLong(val) {
+        return typeof val === "number" ? MongoDb.Long.fromNumber(val) : val;
+    }
+
     //              #
     //              #
     //  ###   ##   ###
@@ -37,13 +69,11 @@ class Db {
             client = new MongoDb.MongoClient(`mongodb://web_nnn:${process.env.WEB_NNN_PASSWORD}@db:27017/nnn`, {
                 authMechanism: "SCRAM-SHA-256",
                 authSource: "admin",
-                useUnifiedTopology: true
+                promoteLongs: false
             });
         }
 
-        if (!client.isConnected()) {
-            await client.connect();
-        }
+        await client.connect();
 
         if (!db) {
             db = client.db("nnn");

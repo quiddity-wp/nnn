@@ -1,7 +1,6 @@
 /**
  * @typedef {import("../../types/node/dbTypes").Player} DbTypes.Player
  * @typedef {import("discord.js").GuildMember} DiscordJs.GuildMember
- * @typedef {import("mongodb").InsertOneWriteOpResult<DbTypes.Player>} MongoDb_InsertOneWriteOpResult.Player
  * @typedef {import("../../types/node/playerTypes").Career} PlayerTypes.Career
  * @typedef {import("../../types/node/playerTypes").Player} PlayerTypes.Player
  * @typedef {import("../../types/node/playerTypes").SeasonStanding} PlayerTypes.SeasonStanding
@@ -42,8 +41,8 @@ class PlayerDb {
     static async add(player) {
         const db = await Db.get();
 
-        /** @type {DbTypes.Player} */
         const dbPlayer = {
+            _id: void 0,
             discordId: player.discordId,
             active: player.active
         };
@@ -58,10 +57,9 @@ class PlayerDb {
 
         await Db.id(dbPlayer, "player");
 
-        /** @type {MongoDb_InsertOneWriteOpResult.Player} */
-        const result = await db.collection("player").insertOne(dbPlayer);
+        const result = await /** @type {MongoDb.Collection<DbTypes.Player>} */(db.collection("player")).insertOne(dbPlayer); // eslint-disable-line no-extra-parens
 
-        player._id = result.ops[0]._id.toNumber();
+        player._id = Db.fromLong(result.insertedId);
     }
 
     //       ##                      ###    #
@@ -104,8 +102,7 @@ class PlayerDb {
     static async get(id) {
         const db = await Db.get();
 
-        /** @type {PlayerTypes.Player} */
-        const data = await db.collection("player").findOne({_id: MongoDb.Long.fromNumber(id)});
+        const data = /** @type {PlayerTypes.Player} */(await db.collection("player").findOne({_id: MongoDb.Long.fromNumber(id)})); // eslint-disable-line no-extra-parens
 
         return data || void 0;
     }
@@ -125,8 +122,7 @@ class PlayerDb {
     static async getByDiscordId(discordId) {
         const db = await Db.get();
 
-        /** @type {PlayerTypes.Player} */
-        const data = await db.collection("player").findOne({discordId});
+        const data = /** @type {PlayerTypes.Player} */(await db.collection("player").findOne({discordId})); // eslint-disable-line no-extra-parens
 
         return data || void 0;
     }
@@ -161,8 +157,7 @@ class PlayerDb {
 
         const db = await Db.get();
 
-        /** @type {PlayerTypes.Career} */
-        cache = await db.collection("challenge").aggregate([
+        cache = /** @type {PlayerTypes.Career} */(await db.collection("challenge").aggregate([ // eslint-disable-line no-extra-parens
             {
                 $match: {
                     $and: [
@@ -881,7 +876,7 @@ class PlayerDb {
             {
                 $unwind: "$player"
             }
-        ]).next();
+        ]).next());
 
         cache = cache || {player: void 0, career: [], performance: [], games: []};
 
@@ -923,8 +918,7 @@ class PlayerDb {
 
         const db = await Db.get();
 
-        /** @type {PlayerTypes.SeasonStanding[]} */
-        cache = await db.collection("challenge").aggregate([
+        cache = /** @type {PlayerTypes.SeasonStanding[]} */(await db.collection("challenge").aggregate([ // eslint-disable-line no-extra-parens
             {
                 $facet: {
                     challengingPlayer: [
@@ -1150,7 +1144,7 @@ class PlayerDb {
             {
                 $sort: {rating: -1}
             }
-        ]).toArray();
+        ]).toArray());
 
         cache = cache || [];
 
@@ -1178,8 +1172,7 @@ class PlayerDb {
     static async getStatsForRecentSeason(id) {
         const db = await Db.get();
 
-        /** @type {PlayerTypes.SeasonStats[]} */
-        const data = await db.collection("challenge").aggregate([
+        const data = /** @type {PlayerTypes.SeasonStats[]} */(await db.collection("challenge").aggregate([ // eslint-disable-line no-extra-parens
             {
                 $facet: {
                     challengingPlayer: [
@@ -1412,7 +1405,7 @@ class PlayerDb {
                     }
                 }
             }
-        ]).toArray();
+        ]).toArray());
 
         return data && data[0] || void 0;
     }

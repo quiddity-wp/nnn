@@ -40,8 +40,7 @@ class Rating {
     static async getForPlayerBySeason(player, season) {
         const db = await Db.get();
 
-        /** @type {RatingTypes.RankAndRating[]} */
-        const data = await db.collection("rating").aggregate([
+        const data = /** @type {RatingTypes.RankAndRating[]} */(await db.collection("rating").aggregate([ // eslint-disable-line no-extra-parens
             {
                 $facet: {
                     rating: [
@@ -92,7 +91,7 @@ class Rating {
                     rank: {$add: ["$rank", 1]}
                 }
             }
-        ]).toArray();
+        ]).toArray());
 
         return data && data[0] || void 0;
     }
@@ -112,7 +111,7 @@ class Rating {
     static async getTopPlayers(season) {
         const db = await Db.get();
 
-        return db.collection("rating").aggregate([
+        return /** @type Promise<RatingTypes.Standing[]> */(db.collection("rating").aggregate([ // eslint-disable-line no-extra-parens
             {
                 $match: {season: MongoDb.Long.fromNumber(season)}
             },
@@ -263,7 +262,7 @@ class Rating {
                     lost: {$add: [{$ifNull: ["$challengingGames.lost", 0]}, {$ifNull: ["$challengedGames.lost", 0]}]}
                 }
             }
-        ]).toArray();
+        ]).toArray());
     }
 
     //                #         #          ###          #     #                       ####               ##

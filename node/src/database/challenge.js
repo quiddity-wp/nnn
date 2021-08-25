@@ -6,7 +6,6 @@
  * @typedef {import("../../types/node/challengeTypes").UpcomingChallenge} ChallengeTypes.UpcomingChallenge
  * @typedef {import("../../types/node/dbTypes").Challenge} DbTypes.Challenge
  * @typedef {import("../../types/node/dbTypes").ChallengeUpcomingChallenge} DbTypes.ChallengeUpcomingChallenge
- * @typedef {import("mongodb").InsertOneWriteOpResult<DbTypes.Challenge>} MongoDb_InsertOneWriteOpResult.Challenge
  * @typedef {import("../../types/node/playerTypes").Player} PlayerTypes.Player
  */
 
@@ -102,6 +101,7 @@ class ChallengeDb {
 
         /** @type {DbTypes.Challenge} */
         const challenge = {
+            _id: void 0,
             players: {
                 challengingPlayerId: MongoDb.Long.fromNumber(challengingPlayer._id),
                 challengedPlayerId: MongoDb.Long.fromNumber(challengedPlayer._id)
@@ -110,10 +110,9 @@ class ChallengeDb {
 
         await Db.id(challenge, "challenge");
 
-        /** @type {MongoDb_InsertOneWriteOpResult.Challenge} */
-        const result = await db.collection("challenge").insertOne(challenge);
+        const result = await /** @type {MongoDb.Collection<DbTypes.Challenge>} */(db.collection("challenge")).insertOne(challenge); // eslint-disable-line no-extra-parens
 
-        challenge._id = result.ops[0]._id;
+        challenge._id = result.insertedId;
 
         return ChallengeDb.convertDbTypeToChallengeType(challenge);
     }
@@ -196,8 +195,7 @@ class ChallengeDb {
     static async find(player1, player2) {
         const db = await Db.get();
 
-        /** @type {ChallengeTypes.Challenge} */
-        const data = await db.collection("challenge").findOne({
+        const data = /** @type {ChallengeTypes.Challenge} */(await db.collection("challenge").findOne({ // eslint-disable-line no-extra-parens
             $and: [
                 {confirmedTime: null},
                 {closeTime: null},
@@ -219,7 +217,7 @@ class ChallengeDb {
                     ]
                 }
             ]
-        });
+        }));
 
         return data || void 0;
     }
@@ -239,8 +237,7 @@ class ChallengeDb {
     static async get(id) {
         const db = await Db.get();
 
-        /** @type {ChallengeTypes.Challenge} */
-        const data = await db.collection("challenge").findOne({_id: MongoDb.Long.fromNumber(id)});
+        const data = /** @type {ChallengeTypes.Challenge} */(await db.collection("challenge").findOne({_id: MongoDb.Long.fromNumber(id)})); // eslint-disable-line no-extra-parens
 
         return data || void 0;
     }
@@ -260,8 +257,7 @@ class ChallengeDb {
     static async getCompletedGamesForSeason(season) {
         const db = await Db.get();
 
-        /** @type {ChallengeTypes.Result[]} */
-        const data = await db.collection("challenge").aggregate([
+        const data = /** @type {ChallengeTypes.Result[]} */(await db.collection("challenge").aggregate([ // eslint-disable-line no-extra-parens
             {
                 $match: {
                     $and: [
@@ -294,7 +290,7 @@ class ChallengeDb {
             {
                 $project: {matchTime: 0}
             }
-        ]).toArray();
+        ]).toArray());
 
         return data || [];
     }
@@ -330,8 +326,7 @@ class ChallengeDb {
 
         const db = await Db.get();
 
-        /** @type {ChallengeTypes.Match[]} */
-        cache = await db.collection("challenge").aggregate([
+        cache = /** @type {ChallengeTypes.Match[]} */(await db.collection("challenge").aggregate([ // eslint-disable-line no-extra-parens
             {
                 $match: {
                     $and: [
@@ -395,7 +390,7 @@ class ChallengeDb {
                 $sort: {matchTime: -1}
             },
             {$skip: (page - 1) * pageSize}, {$limit: pageSize}
-        ]).toArray();
+        ]).toArray());
 
         cache = cache || [];
 
@@ -423,8 +418,7 @@ class ChallengeDb {
     static async getPendingForPlayer(player) {
         const db = await Db.get();
 
-        /** @type {ChallengeTypes.Challenge[]} */
-        const data = await db.collection("challenge").find({
+        const data = /** @type {ChallengeTypes.Challenge[]} */(await db.collection("challenge").find({ // eslint-disable-line no-extra-parens
             $and: [
                 {
                     $or: [
@@ -434,7 +428,7 @@ class ChallengeDb {
                 },
                 {closeTime: {$exists: false}}
             ]
-        }).toArray();
+        }).toArray());
 
         return data || [];
     }
@@ -470,10 +464,7 @@ class ChallengeDb {
             });
         }
 
-        /**
-         * @type {DbTypes.ChallengeUpcomingChallenge[]}
-         */
-        const data = await db.collection("challenge").aggregate([
+        const data = /** @type {DbTypes.ChallengeUpcomingChallenge[]} */(await db.collection("challenge").aggregate([ // eslint-disable-line no-extra-parens
             {
                 $match: {
                     $and: match
@@ -503,7 +494,7 @@ class ChallengeDb {
                     challengedPlayerName: "$challengedPlayer.name"
                 }
             }
-        ]).toArray();
+        ]).toArray());
 
         return data || [];
     }
@@ -537,7 +528,7 @@ class ChallengeDb {
 
         const db = await Db.get();
 
-        cache = await db.collection("challenge").aggregate([
+        cache = /** @type {{upcoming: ChallengeTypes.Match[], totalCompleted: number}} */(await db.collection("challenge").aggregate([ // eslint-disable-line no-extra-parens
             {
                 $facet: {
                     totalCompleted: [
@@ -620,7 +611,7 @@ class ChallengeDb {
                     upcoming: 1
                 }
             }
-        ]).next();
+        ]).next());
 
         cache = cache || {upcoming: [], totalCompleted: 0};
 

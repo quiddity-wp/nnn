@@ -2,7 +2,7 @@ import { Double, Int32, Long } from "mongodb"
 
 declare namespace DbTypes {
     type Challenge = {
-        _id?: Long
+        _id: Long
         players: {
             challengingPlayerId: Long
             challengedPlayerId: Long
@@ -45,7 +45,7 @@ declare namespace DbTypes {
     }
 
     type Player = {
-        _id?: Long
+        _id: Long
         discordId: string
         name?: string
         timezone?: string
@@ -53,14 +53,14 @@ declare namespace DbTypes {
     }
 
     type Rating = {
-        _id?: string
+        _id: string
         playerId: Long
         season: Long
         rating: Double
     }
 
     type Season = {
-        _id?: Long
+        _id: Long
         startDate: Date
         endDate: Date
         K: Int32
