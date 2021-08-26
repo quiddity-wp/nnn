@@ -1,4 +1,5 @@
 /**
+ * @typedef {import("../../types/node/dbTypes").Season} DbTypes.Season
  * @typedef {import("../../types/node/seasonTypes").Season} SeasonTypes.Season
  */
 
@@ -34,9 +35,14 @@ class SeasonDb {
     static async get(id) {
         const db = await Db.get();
 
-        const data = /** @type {SeasonTypes.Season} */(await db.collection("season").findOne({_id: MongoDb.Long.fromNumber(id)})); // eslint-disable-line no-extra-parens
+        const data = await db.collection("season").findOne({_id: MongoDb.Long.fromNumber(id)});
 
-        return data || void 0;
+        return data ? {
+            _id: Db.fromLong(data._id),
+            startDate: data.startDate,
+            endDate: data.endDate,
+            K: data.K.value
+        } : void 0;
     }
 
     //              #    ####                    ###          #
@@ -54,7 +60,7 @@ class SeasonDb {
     static async getFromDate(date) {
         const db = await Db.get();
 
-        let data = /** @type {SeasonTypes.Season} */(await db.collection("season").findOne({startDate: {$lte: date}})); // eslint-disable-line no-extra-parens
+        let data = await db.collection("season").findOne({startDate: {$lte: date}});
 
         if (!data) {
             return void 0;
@@ -66,16 +72,16 @@ class SeasonDb {
         let k;
 
         while (!data) {
-            data = /** @type {SeasonTypes.Season} */(await db.collection("season").findOne({ // eslint-disable-line no-extra-parens
+            data = await db.collection("season").findOne({
                 $and: [
                     {startDate: {$lte: date}},
                     {endDate: {$gt: date}}
                 ]
-            }));
+            });
 
             if (!data) {
                 if (!k) {
-                    k = (await db.collection("season").aggregate([
+                    k = /** @type {DbTypes.Season[]} */(await db.collection("season").aggregate([
                         {
                             $sort: {season: -1}
                         },
@@ -88,7 +94,7 @@ class SeasonDb {
                         {
                             $limit: 1
                         }
-                    ]).toArray())[0].K.valueOf();
+                    ]).toArray())[0].K.value;
                 }
 
                 const maxSeason = /** @type {{endDate: Date}[]} */(await db.collection("season").aggregate([ // eslint-disable-line no-extra-parens
@@ -101,6 +107,7 @@ class SeasonDb {
                 ]).toArray());
 
                 const season = {
+                    _id: MongoDb.Long.ZERO,
                     startDate: maxSeason[0].endDate,
                     endDate: new Date(maxSeason[0].endDate.getFullYear(), maxSeason[0].endDate.getMonth() + 2, maxSeason[0].endDate.getDate()),
                     K: new MongoDb.Int32(k)
@@ -112,7 +119,12 @@ class SeasonDb {
             }
         }
 
-        return data || void 0;
+        return data ? {
+            _id: Db.fromLong(data._id),
+            startDate: data.startDate,
+            endDate: data.endDate,
+            K: data.K.value
+        } : void 0;
     }
 
     //              #     ##                                  #  #              #

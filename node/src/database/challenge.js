@@ -99,9 +99,8 @@ class ChallengeDb {
     static async add(challengingPlayer, challengedPlayer) {
         const db = await Db.get();
 
-        /** @type {DbTypes.Challenge} */
         const challenge = {
-            _id: void 0,
+            _id: MongoDb.Long.ZERO,
             players: {
                 challengingPlayerId: MongoDb.Long.fromNumber(challengingPlayer._id),
                 challengedPlayerId: MongoDb.Long.fromNumber(challengedPlayer._id)
@@ -110,7 +109,7 @@ class ChallengeDb {
 
         await Db.id(challenge, "challenge");
 
-        const result = await /** @type {MongoDb.Collection<DbTypes.Challenge>} */(db.collection("challenge")).insertOne(challenge); // eslint-disable-line no-extra-parens
+        const result = await db.collection("challenge").insertOne(challenge);
 
         challenge._id = result.insertedId;
 
@@ -195,7 +194,7 @@ class ChallengeDb {
     static async find(player1, player2) {
         const db = await Db.get();
 
-        const data = /** @type {ChallengeTypes.Challenge} */(await db.collection("challenge").findOne({ // eslint-disable-line no-extra-parens
+        const data = await db.collection("challenge").findOne({
             $and: [
                 {confirmedTime: null},
                 {closeTime: null},
@@ -217,9 +216,48 @@ class ChallengeDb {
                     ]
                 }
             ]
-        }));
+        });
 
-        return data || void 0;
+        return data ? {
+            _id: Db.fromLong(data._id),
+            players: {
+                challengingPlayerId: Db.fromLong(data.players.challengingPlayerId),
+                challengedPlayerId: Db.fromLong(data.players.challengedPlayerId)
+            },
+            title: data.title,
+            suggestedTime: data.suggestedTime,
+            suggestedByPlayerId: data.suggestedByPlayerId ? Db.fromLong(data.suggestedByPlayerId) : void 0,
+            matchTime: data.matchTime,
+            reportTime: data.reportTime,
+            confirmedTime: data.confirmedTime,
+            closeTime: data.closeTime,
+            voidTime: data.voidTime,
+            rematchedTime: data.rematchedTime,
+            rematchRequestedByPlayerId: data.rematchRequestedByPlayerId ? Db.fromLong(data.rematchRequestedByPlayerId) : void 0,
+            season: data.season ? Db.fromLong(data.season) : void 0,
+            postseason: data.postseason,
+            stats: data.stats ? {
+                challengingPlayer: data.stats.challengingPlayer ? {
+                    won: data.stats.challengingPlayer.won,
+                    depth: data.stats.challengingPlayer.depth ? data.stats.challengingPlayer.depth.value : void 0,
+                    time: data.stats.challengingPlayer.time ? data.stats.challengingPlayer.time.value : void 0,
+                    completed: data.stats.challengingPlayer.completed,
+                    comment: data.stats.challengingPlayer.comment
+                } : void 0,
+                challengedPlayer: data.stats.challengedPlayer ? {
+                    won: data.stats.challengedPlayer.won,
+                    depth: data.stats.challengedPlayer.depth ? data.stats.challengedPlayer.depth.value : void 0,
+                    time: data.stats.challengedPlayer.time ? data.stats.challengedPlayer.time.value : void 0,
+                    completed: data.stats.challengedPlayer.completed,
+                    comment: data.stats.challengedPlayer.comment
+                } : void 0
+            } : void 0,
+            ratings: data.ratings ? {
+                challengingPlayerRating: data.ratings.challengingPlayerRating ? data.ratings.challengingPlayerRating.value : void 0,
+                challengedPlayerRating: data.ratings.challengedPlayerRating ? data.ratings.challengedPlayerRating.value : void 0,
+                change: data.ratings.change ? data.ratings.change.value : void 0
+            } : void 0
+        } : void 0;
     }
 
     //              #
@@ -237,9 +275,48 @@ class ChallengeDb {
     static async get(id) {
         const db = await Db.get();
 
-        const data = /** @type {ChallengeTypes.Challenge} */(await db.collection("challenge").findOne({_id: MongoDb.Long.fromNumber(id)})); // eslint-disable-line no-extra-parens
+        const data = await db.collection("challenge").findOne({_id: MongoDb.Long.fromNumber(id)});
 
-        return data || void 0;
+        return data ? {
+            _id: Db.fromLong(data._id),
+            players: {
+                challengingPlayerId: Db.fromLong(data.players.challengingPlayerId),
+                challengedPlayerId: Db.fromLong(data.players.challengedPlayerId)
+            },
+            title: data.title,
+            suggestedTime: data.suggestedTime,
+            suggestedByPlayerId: data.suggestedByPlayerId ? Db.fromLong(data.suggestedByPlayerId) : void 0,
+            matchTime: data.matchTime,
+            reportTime: data.reportTime,
+            confirmedTime: data.confirmedTime,
+            closeTime: data.closeTime,
+            voidTime: data.voidTime,
+            rematchedTime: data.rematchedTime,
+            rematchRequestedByPlayerId: data.rematchRequestedByPlayerId ? Db.fromLong(data.rematchRequestedByPlayerId) : void 0,
+            season: data.season ? Db.fromLong(data.season) : void 0,
+            postseason: data.postseason,
+            stats: data.stats ? {
+                challengingPlayer: data.stats.challengingPlayer ? {
+                    won: data.stats.challengingPlayer.won,
+                    depth: data.stats.challengingPlayer.depth ? data.stats.challengingPlayer.depth.value : void 0,
+                    time: data.stats.challengingPlayer.time ? data.stats.challengingPlayer.time.value : void 0,
+                    completed: data.stats.challengingPlayer.completed,
+                    comment: data.stats.challengingPlayer.comment
+                } : void 0,
+                challengedPlayer: data.stats.challengedPlayer ? {
+                    won: data.stats.challengedPlayer.won,
+                    depth: data.stats.challengedPlayer.depth ? data.stats.challengedPlayer.depth.value : void 0,
+                    time: data.stats.challengedPlayer.time ? data.stats.challengedPlayer.time.value : void 0,
+                    completed: data.stats.challengedPlayer.completed,
+                    comment: data.stats.challengedPlayer.comment
+                } : void 0
+            } : void 0,
+            ratings: data.ratings ? {
+                challengingPlayerRating: data.ratings.challengingPlayerRating ? data.ratings.challengingPlayerRating.value : void 0,
+                challengedPlayerRating: data.ratings.challengedPlayerRating ? data.ratings.challengedPlayerRating.value : void 0,
+                change: data.ratings.change ? data.ratings.change.value : void 0
+            } : void 0
+        } : void 0;
     }
 
     //              #     ##                     ##           #             #   ##                            ####               ##
@@ -418,7 +495,7 @@ class ChallengeDb {
     static async getPendingForPlayer(player) {
         const db = await Db.get();
 
-        const data = /** @type {ChallengeTypes.Challenge[]} */(await db.collection("challenge").find({ // eslint-disable-line no-extra-parens
+        const data = await db.collection("challenge").find({
             $and: [
                 {
                     $or: [
@@ -428,9 +505,48 @@ class ChallengeDb {
                 },
                 {closeTime: {$exists: false}}
             ]
-        }).toArray());
+        }).toArray();
 
-        return data || [];
+        return data ? data.map((d) => ({
+            _id: Db.fromLong(d._id),
+            players: {
+                challengingPlayerId: Db.fromLong(d.players.challengingPlayerId),
+                challengedPlayerId: Db.fromLong(d.players.challengedPlayerId)
+            },
+            title: d.title,
+            suggestedTime: d.suggestedTime,
+            suggestedByPlayerId: d.suggestedByPlayerId ? Db.fromLong(d.suggestedByPlayerId) : void 0,
+            matchTime: d.matchTime,
+            reportTime: d.reportTime,
+            confirmedTime: d.confirmedTime,
+            closeTime: d.closeTime,
+            voidTime: d.voidTime,
+            rematchedTime: d.rematchedTime,
+            rematchRequestedByPlayerId: d.rematchRequestedByPlayerId ? Db.fromLong(d.rematchRequestedByPlayerId) : void 0,
+            season: d.season ? Db.fromLong(d.season) : void 0,
+            postseason: d.postseason,
+            stats: d.stats ? {
+                challengingPlayer: d.stats.challengingPlayer ? {
+                    won: d.stats.challengingPlayer.won,
+                    depth: d.stats.challengingPlayer.depth ? d.stats.challengingPlayer.depth.value : void 0,
+                    time: d.stats.challengingPlayer.time ? d.stats.challengingPlayer.time.value : void 0,
+                    completed: d.stats.challengingPlayer.completed,
+                    comment: d.stats.challengingPlayer.comment
+                } : void 0,
+                challengedPlayer: d.stats.challengedPlayer ? {
+                    won: d.stats.challengedPlayer.won,
+                    depth: d.stats.challengedPlayer.depth ? d.stats.challengedPlayer.depth.value : void 0,
+                    time: d.stats.challengedPlayer.time ? d.stats.challengedPlayer.time.value : void 0,
+                    completed: d.stats.challengedPlayer.completed,
+                    comment: d.stats.challengedPlayer.comment
+                } : void 0
+            } : void 0,
+            ratings: d.ratings ? {
+                challengingPlayerRating: d.ratings.challengingPlayerRating ? d.ratings.challengingPlayerRating.value : void 0,
+                challengedPlayerRating: d.ratings.challengedPlayerRating ? d.ratings.challengedPlayerRating.value : void 0,
+                change: d.ratings.change ? d.ratings.change.value : void 0
+            } : void 0
+        })) : void 0;
     }
 
     //              #    #  #                           #

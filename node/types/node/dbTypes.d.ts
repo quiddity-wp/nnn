@@ -44,6 +44,11 @@ declare namespace DbTypes {
         challengedPlayerName: string
     }
 
+    type Counters = {
+        _id: string
+        value: Long
+    }
+
     type Player = {
         _id: Long
         discordId: string

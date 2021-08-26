@@ -57,7 +57,7 @@ class PlayerDb {
 
         await Db.id(dbPlayer, "player");
 
-        const result = await /** @type {MongoDb.Collection<DbTypes.Player>} */(db.collection("player")).insertOne(dbPlayer); // eslint-disable-line no-extra-parens
+        const result = await db.collection("player").insertOne(dbPlayer);
 
         player._id = Db.fromLong(result.insertedId);
     }
@@ -102,9 +102,15 @@ class PlayerDb {
     static async get(id) {
         const db = await Db.get();
 
-        const data = /** @type {PlayerTypes.Player} */(await db.collection("player").findOne({_id: MongoDb.Long.fromNumber(id)})); // eslint-disable-line no-extra-parens
+        const data = await db.collection("player").findOne({_id: MongoDb.Long.fromNumber(id)});
 
-        return data || void 0;
+        return data ? {
+            _id: Db.fromLong(data._id),
+            discordId: data.discordId,
+            name: data.name,
+            timezone: data.timezone,
+            active: data.active
+        } : void 0;
     }
 
     //              #    ###         ###    #                                #  ###      #
@@ -122,9 +128,15 @@ class PlayerDb {
     static async getByDiscordId(discordId) {
         const db = await Db.get();
 
-        const data = /** @type {PlayerTypes.Player} */(await db.collection("player").findOne({discordId})); // eslint-disable-line no-extra-parens
+        const data = await db.collection("player").findOne({discordId});
 
-        return data || void 0;
+        return data ? {
+            _id: Db.fromLong(data._id),
+            discordId: data.discordId,
+            name: data.name,
+            timezone: data.timezone,
+            active: data.active
+        } : void 0;
     }
 
     //              #     ##
