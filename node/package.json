@@ -23,7 +23,7 @@
         "discord.js": "12.5.3",
         "express": "4.17.1",
         "hot-router": "1.0.0-beta.5",
-        "html-minifier": "4.0.0",
+        "html-minifier-terser": "6.0.0",
         "mongodb": "4.1.1",
         "node-application-insights-logger": "roncli/node-application-insights-logger#v1.0.3",
         "node-minify": "roncli/node-minify#v1.1.0",
@@ -35,7 +35,7 @@
         "@babel/core": "7.15.0",
         "@babel/eslint-parser": "7.15.0",
         "@types/express": "4.17.13",
-        "@types/html-minifier": "4.0.1",
+        "@types/html-minifier-terser": "5.1.2",
         "@types/node": "16.7.1"
     }
 }

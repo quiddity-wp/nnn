@@ -101,6 +101,7 @@ class Common extends RouterBase {
             {
                 collapseBooleanAttributes: true,
                 collapseWhitespace: true,
+                conservativeCollapse: true,
                 decodeEntities: true,
                 html5: true,
                 removeAttributeQuotes: true,
