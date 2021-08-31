@@ -3,7 +3,7 @@
  * @typedef {import("express").Request} Express.Request
  */
 
-const HtmlMinifier = require("html-minifier"),
+const HtmlMinifierTerser = require("html-minifier-terser"),
     IndexView = require("../../public/views/index"),
     Minify = require("node-minify"),
     pjson = require("../../package.json"),
@@ -89,7 +89,7 @@ class Common extends RouterBase {
             <link rel="shortcut icon" href="/images/favicon.ico">
         `;
 
-        return HtmlMinifier.minify(
+        return HtmlMinifierTerser.minify(
             IndexView.get({
                 head,
                 html,
