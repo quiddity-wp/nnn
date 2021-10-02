@@ -29,7 +29,7 @@
         "node-minify": "roncli/node-minify#v1.1.0",
         "node-redis": "roncli/node-redis#v0.1.5",
         "timezone-js": "0.4.13",
-        "tzdata": "1.0.25"
+        "tzdata": "1.0.26"
     },
     "devDependencies": {
         "@babel/core": "7.15.5",
