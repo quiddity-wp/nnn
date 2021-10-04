@@ -25,8 +25,8 @@
         "hot-router": "1.0.0-beta.8",
         "html-minifier-terser": "6.0.2",
         "mongodb": "4.1.2",
-        "node-application-insights-logger": "roncli/node-application-insights-logger#v1.0.4",
-        "node-minify": "roncli/node-minify#v1.1.0",
+        "node-application-insights-logger": "roncli/node-application-insights-logger#v1.0.5",
+        "node-minify": "roncli/node-minify#v1.1.1",
         "node-redis": "roncli/node-redis#v0.1.5",
         "timezone-js": "0.4.13",
         "tzdata": "1.0.26"
