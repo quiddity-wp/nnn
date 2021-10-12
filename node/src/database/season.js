@@ -5,9 +5,9 @@
 
 const MongoDb = require("mongodb"),
 
-    Cache = require("node-redis").Cache,
+    Cache = require("@roncli/node-redis").Cache,
     Db = require("."),
-    Log = require("node-application-insights-logger");
+    Log = require("@roncli/node-application-insights-logger");
 
 //   ###                                      ####   #
 //  #   #                                      #  #  #

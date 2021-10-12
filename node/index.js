@@ -1,14 +1,15 @@
-const Cache = require("node-redis").Cache,
-    compression = require("compression"),
+const compression = require("compression"),
     express = require("express"),
     HotRouter = require("hot-router"),
-    Log = require("node-application-insights-logger"),
-    Minify = require("node-minify"),
+    Log = require("@roncli/node-application-insights-logger"),
+    Minify = require("@roncli/node-minify"),
     path = require("path"),
-    Redis = require("node-redis"),
+    Redis = require("@roncli/node-redis"),
     tz = require("timezone-js"),
     tzdata = require("tzdata"),
     util = require("util"),
+
+    Cache = Redis.Cache,
 
     Discord = require("./src/discord"),
     Exception = require("./src/errors/exception");

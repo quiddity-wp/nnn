@@ -1,5 +1,5 @@
 const DiscordJs = require("discord.js"),
-    Log = require("node-application-insights-logger"),
+    Log = require("@roncli/node-application-insights-logger"),
     util = require("util"),
 
     Commands = require("./commands"),

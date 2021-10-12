@@ -5,7 +5,7 @@
 
 const HtmlMinifierTerser = require("html-minifier-terser"),
     IndexView = require("../../public/views/index"),
-    Minify = require("node-minify"),
+    Minify = require("@roncli/node-minify"),
     pjson = require("../../package.json"),
     RouterBase = require("hot-router").RouterBase;
 

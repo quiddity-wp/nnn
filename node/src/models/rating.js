@@ -10,7 +10,7 @@ const ChallengeDb = require("../database/challenge"),
     Db = require("../database/rating"),
     Elo = require("../elo"),
     Exception = require("../errors/exception"),
-    Log = require("node-application-insights-logger"),
+    Log = require("@roncli/node-application-insights-logger"),
     SeasonDb = require("../database/season");
 
 /** @type {typeof import("../discord")} */

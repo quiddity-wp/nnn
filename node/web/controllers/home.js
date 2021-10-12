@@ -6,11 +6,11 @@
 
 const DiscordMarkdown = require("discord-markdown"),
 
-    Cache = require("node-redis").Cache,
+    Cache = require("@roncli/node-redis").Cache,
     Common = require("../includes/common"),
     Discord = require("../../src/discord"),
     HomeView = require("../../public/views/home"),
-    Log = require("node-application-insights-logger"),
+    Log = require("@roncli/node-application-insights-logger"),
     Player = require("../../src/models/player"),
     RouterBase = require("hot-router").RouterBase;
 
