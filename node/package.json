@@ -23,7 +23,7 @@
         "@roncli/node-redis": "roncli/node-redis#v0.1.9",
         "compression": "1.7.4",
         "discord-markdown": "2.5.1",
-        "discord.js": "13.3.0",
+        "discord.js": "13.3.1",
         "express": "4.17.1",
         "hot-router": "1.0.0-beta.8",
         "html-minifier-terser": "6.0.2",
