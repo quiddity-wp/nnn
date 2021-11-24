@@ -18,7 +18,7 @@
     },
     "license": "MIT",
     "dependencies": {
-        "@roncli/node-application-insights-logger": "roncli/node-application-insights-logger#v1.0.5",
+        "@roncli/node-application-insights-logger": "roncli/node-application-insights-logger#v1.0.6",
         "@roncli/node-minify": "roncli/node-minify#v1.1.1",
         "@roncli/node-redis": "roncli/node-redis#v0.1.9",
         "compression": "1.7.4",
