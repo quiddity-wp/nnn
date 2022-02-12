@@ -20,7 +20,7 @@
     "dependencies": {
         "@roncli/node-application-insights-logger": "roncli/node-application-insights-logger#v1.0.7",
         "@roncli/node-minify": "roncli/node-minify#v1.1.3",
-        "@roncli/node-redis": "roncli/node-redis#v0.1.12",
+        "@roncli/node-redis": "roncli/node-redis#v0.1.13",
         "compression": "1.7.4",
         "discord-markdown": "2.5.1",
         "discord.js": "13.6.0",
