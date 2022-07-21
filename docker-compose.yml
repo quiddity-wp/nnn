@@ -50,7 +50,8 @@ services:
     restart: always
     entrypoint: /var/mongo/start.sh
     volumes:
-      - db-data:/data/db:rw
+      - /data/db:/data/db:rw
+      - /mnt/backup:/data/backup:rw
 
   redis:
     container_name: nnn-redis
