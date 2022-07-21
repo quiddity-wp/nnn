@@ -25,7 +25,7 @@ class LinksView {
             <div id="link">
                 <div class="section font-pixel-huge">Noita Nemesis by Soler91</div>
                 <div>
-                    Noita Nemesis mod: <a href="" target="_blank"></a><br />
+                    Noita Together mod, includes Noita Nemesis: <a href="https://github.com/soler91/noita-together/releases" target="_blank">https://github.com/soler91/noita-together/releases</a><br />
                 </div>
                 <div class="section font-pixel-huge">Buy Noita</div>
                 <div>

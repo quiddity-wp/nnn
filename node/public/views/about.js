@@ -18,7 +18,7 @@ class AboutView {
             <div id="about">
                 <div class="section font-pixel-huge">About the Noita Nemesis Nation</div>
                 <div class="text">
-                    The Noita Nemesis Nation is a community of players who compete in the game <a href="https://noitagame.com" target="_blank">Noita</a> by Nolla Games, a magical action roguelite set in a world where every pixel is physically simulated.  We use the mod <a href="" target="_blank">Noita Nemesis</a> by Soler91, a mod where players play on the same seed at the same time where the first player to get to the item gets the item and removes it from the other player's world.  To score a win in the Nation, you must either win the game or not be the first player to die.<br /><br />
+                    The Noita Nemesis Nation is a community of players who compete in the game <a href="https://noitagame.com" target="_blank">Noita</a> by Nolla Games, a magical action roguelite set in a world where every pixel is physically simulated.  We use the mod Noita Nemesis, part of <a href="https://github.com/soler91/noita-together" target="_blank">Noita Together</a> by Soler91, a mod where players play on the same seed at the same time where the first player to get to the item gets the item and removes it from the other player's world.  To score a win in the Nation, you must be the last noita standing.<br /><br />
                     To play, join the Discord server (link is at the bottom of the page), where you may join the Nation.  For rules specific to the league, please see the Rules section on the Discord server.
                 </div>
                 <div class="section font-pixel-huge">Discord Bot Commands</div>
