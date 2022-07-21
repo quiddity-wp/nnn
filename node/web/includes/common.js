@@ -49,7 +49,7 @@ class Common extends RouterBase {
      * @param {CommonTypes.Files} files The files to combine and minify.
      * @param {string} html The HTML to make a full web page from.
      * @param {Express.Request} req The request of the page.
-     * @returns {string} The HTML of the full web page.
+     * @returns {Promise<string>} The HTML of the full web page.
      */
     static page(head, files, html, req) {
         if (!files) {

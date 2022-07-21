@@ -4,14 +4,11 @@
  * @typedef {import("../../types/node/challengeTypes").Match} ChallengeTypes.Match
  * @typedef {import("../../types/node/challengeTypes").Stats} ChallengeTypes.Stats
  * @typedef {import("../../types/node/challengeTypes").UpcomingChallenge} ChallengeTypes.UpcomingChallenge
- * @typedef {import("discord.js").CategoryChannel} DiscordJs.CategoryChannel
- * @typedef {import("discord.js").GuildMember} DiscordJs.GuildMember
- * @typedef {import("discord.js").TextChannel} DiscordJs.TextChannel
- * @typedef {import("discord.js").User} DiscordJs.User
  * @typedef {import("../../types/node/playerTypes").Player} PlayerTypes.Player
  */
 
 const Db = require("../database/challenge"),
+    DiscordJs = require("discord.js"),
     Exception = require("../errors/exception"),
     Player = require("./player"),
     Rating = require("./rating"),
@@ -64,24 +61,24 @@ class Challenge {
         const challengeObj = new Challenge(challenge);
         await challengeObj.setupPlayers();
 
-        await Discord.createChannel(challengeObj.channelName, "text", [
+        await Discord.createChannel(challengeObj.channelName, DiscordJs.ChannelType.GuildText, [
             {
                 id: Discord.id,
-                deny: ["VIEW_CHANNEL"]
+                deny: ["ViewChannel"]
             }, {
                 id: challengeObj.players.challengingPlayer.discordId,
-                allow: ["VIEW_CHANNEL"]
+                allow: ["ViewChannel"]
             }, {
                 id: challengeObj.players.challengedPlayer.discordId,
-                allow: ["VIEW_CHANNEL"]
+                allow: ["ViewChannel"]
             }
         ], `${challengeObj.players.challengingPlayer.name} challenged ${challengeObj.players.challengedPlayer.name}.`);
 
         let challengesCategory = /** @type {DiscordJs.CategoryChannel} */ (Discord.findChannelByName("Challenges")); // eslint-disable-line no-extra-parens
-        if (challengesCategory.children.size >= 40) {
+        if (challengesCategory.children.cache.size >= 40) {
             const oldPosition = challengesCategory.position;
             await challengesCategory.setName("Old Challenges", "Exceeded 40 challenges.");
-            challengesCategory = /** @type {DiscordJs.CategoryChannel} */ (await Discord.createChannel("Challenges", "category", [], "Exceeded 40 challenges.")); // eslint-disable-line no-extra-parens
+            challengesCategory = /** @type {DiscordJs.CategoryChannel} */ (await Discord.createChannel("Challenges", DiscordJs.ChannelType.GuildCategory, [], "Exceeded 40 challenges.")); // eslint-disable-line no-extra-parens
             await challengesCategory.setPosition(oldPosition + 1);
         }
 
@@ -364,7 +361,7 @@ class Challenge {
         }
 
         try {
-            const embed = Discord.messageEmbed({
+            const embed = Discord.embedBuilder({
                 title: "Match Confirmed",
                 description: `This match has been confirmed as a win for **${member}**.  Interested in playing another right now?  Use the \`!rematch\` command!`,
                 fields: [
@@ -427,7 +424,7 @@ class Challenge {
             await this.channel.delete(`${member} closed the challenge.`);
 
             if (this.confirmedTime && !this.voidTime) {
-                await Discord.richQueue(Discord.messageEmbed({
+                await Discord.richQueue(Discord.embedBuilder({
                     title: `${this.players.challengingPlayer.name} ${this.stats.challengingPlayer.won ? 1 : 0}-${this.stats.challengedPlayer.won ? 1 : 0} ${this.players.challengedPlayer.name}`,
                     description: `Played ${this.matchTime.toLocaleString("en-US", {timeZone: process.env.DEFAULT_TIMEZONE, month: "numeric", day: "numeric", year: "numeric", hour12: true, hour: "numeric", minute: "2-digit", timeZoneName: "short"})}`,
                     fields: [
@@ -502,12 +499,12 @@ class Challenge {
                 return a.timezone.localeCompare(b.timezone);
             });
 
-            await Discord.richQueue(Discord.messageEmbed({
+            await Discord.richQueue(Discord.embedBuilder({
                 description: "The time for this match has been set.",
                 fields: sortedTimes.map((t) => ({name: t.timezone, value: t.displayTime}))
             }), this.channel);
 
-            await Discord.richQueue(Discord.messageEmbed({
+            await Discord.richQueue(Discord.embedBuilder({
                 title: `${this.players.challengingPlayer.name} vs ${this.players.challengedPlayer.name}`,
                 description: `This match is scheduled for ${this.matchTime.toLocaleString("en-US", {timeZone: process.env.DEFAULT_TIMEZONE, weekday: "short", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short"})}`,
                 fields: [
@@ -870,12 +867,12 @@ class Challenge {
                 return a.timezone.localeCompare(b.timezone);
             });
 
-            await Discord.richQueue(Discord.messageEmbed({
+            await Discord.richQueue(Discord.embedBuilder({
                 description: "The time for this match has been set.",
                 fields: sortedTimes.map((t) => ({name: t.timezone, value: t.displayTime}))
             }), this.channel);
 
-            await Discord.richQueue(Discord.messageEmbed({
+            await Discord.richQueue(Discord.embedBuilder({
                 title: `${this.players.challengingPlayer.name} vs ${this.players.challengedPlayer.name}`,
                 description: `This match is scheduled for ${this.matchTime.toLocaleString("en-US", {timeZone: process.env.DEFAULT_TIMEZONE, weekday: "short", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short"})}`,
                 fields: [
@@ -958,7 +955,7 @@ class Challenge {
         }
 
         try {
-            const embed = Discord.messageEmbed({
+            const embed = Discord.embedBuilder({
                 title: "Match Confirmed",
                 description: `This match has been confirmed as a win for **<@${(challengingPlayerWon ? this.players.challengingPlayer : this.players.challengedPlayer).discordId}>**.  Interested in playing another right now?  Use the \`!rematch\` command!`,
                 fields: [
@@ -1076,7 +1073,7 @@ class Challenge {
                 return a.timezone.localeCompare(b.timezone);
             });
 
-            await Discord.richQueue(Discord.messageEmbed({
+            await Discord.richQueue(Discord.embedBuilder({
                 description: `**${suggestingMember}** is suggesting to play the match at the time listed below.  **${this.opponent(suggestingMember).name}**, use \`!confirmtime\` to agree to this suggestion.`,
                 fields: sortedTimes.map((t) => ({name: t.timezone, value: t.displayTime}))
             }), this.channel);
@@ -1105,13 +1102,13 @@ class Challenge {
             return;
         }
 
-        const embed = Discord.messageEmbed({
+        const embed = Discord.embedBuilder({
             title: this.title || `**${this.players.challengingPlayer.name}** vs **${this.players.challengedPlayer.name}**`,
             fields: []
         });
 
         if (this.voidTime) {
-            embed.fields.push({
+            embed.addFields({
                 name: "This match has been voided.",
                 value: "This channel will be closed shortly.",
                 inline: false
@@ -1156,7 +1153,7 @@ class Challenge {
             }
         }
 
-        embed.addField("Match Checklist:", checklist.join("\n"));
+        embed.addFields({name: "Match Checklist:", value: checklist.join("\n")});
 
         const parameters = [];
 
@@ -1169,10 +1166,10 @@ class Challenge {
         }
 
         if (parameters.length > 0) {
-            embed.addField("Match Parameters:", parameters.join("\n"));
+            embed.addFields({name: "Match Parameters:", value: parameters.join("\n")});
         }
 
-        embed.addField("Challenge Commands", "Visit https://otl.gg/about for a full list of available challenge commands.");
+        embed.addFields({name: "Challenge Commands", value: "Visit https://otl.gg/about for a full list of available challenge commands."});
 
         const pinned = await this.channel.messages.fetchPinned(false);
 

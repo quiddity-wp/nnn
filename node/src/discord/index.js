@@ -8,7 +8,13 @@ const DiscordJs = require("discord.js"),
 
     commands = new Commands(),
     discord = new DiscordJs.Client({
-        ws: {intents: ["DIRECT_MESSAGES", "GUILDS", "GUILD_MEMBERS", "GUILD_MESSAGES", "GUILD_PRESENCES"]}
+        intents: [
+            DiscordJs.GatewayIntentBits.DirectMessages,
+            DiscordJs.GatewayIntentBits.Guilds,
+            DiscordJs.GatewayIntentBits.GuildMembers,
+            DiscordJs.GatewayIntentBits.GuildMessages,
+            DiscordJs.GatewayIntentBits.GuildPresences
+        ]
     }),
     messageParse = /^!(?<cmd>[^ ]+)(?: +(?<args>.*[^ ]))? *$/;
 
@@ -38,7 +44,7 @@ class Discord {
     //  ##   #  #   # #  #  #  #  #   ##   ###   ###
     /**
      * Returns the channels on the server.
-     * @returns {DiscordJs.Collection<string, DiscordJs.GuildChannel>} The channels.
+     * @returns {DiscordJs.Collection<string, DiscordJs.GuildBasedChannel>} The channels.
      */
     static get channels() {
         if (guild) {
@@ -248,7 +254,7 @@ class Discord {
 
         let msg;
         try {
-            msg = await Discord.richQueue(new DiscordJs.MessageEmbed({description: message}), channel);
+            msg = await Discord.richQueue(new DiscordJs.EmbedBuilder({description: message}), channel);
         } catch {}
         return msg;
     }
@@ -266,23 +272,22 @@ class Discord {
      * @returns {Promise} A promise that resolves when the message is edited.
      */
     static async edit(message, text) {
-        await Discord.richEdit(message, new DiscordJs.MessageEmbed({description: text}));
+        await Discord.richEdit(message, new DiscordJs.EmbedBuilder({description: text}));
     }
 
-    //                                             ####        #              #
-    //                                             #           #              #
-    // # #    ##    ###    ###    ###   ###   ##   ###   # #   ###    ##    ###
-    // ####  # ##  ##     ##     #  #  #  #  # ##  #     ####  #  #  # ##  #  #
-    // #  #  ##      ##     ##   # ##   ##   ##    #     #  #  #  #  ##    #  #
-    // #  #   ##   ###    ###     # #  #      ##   ####  #  #  ###    ##    ###
-    //                                  ###
+    //             #              #  ###          #    ##       #
+    //             #              #  #  #               #       #
+    //  ##   # #   ###    ##    ###  ###   #  #  ##     #     ###   ##   ###
+    // # ##  ####  #  #  # ##  #  #  #  #  #  #   #     #    #  #  # ##  #  #
+    // ##    #  #  #  #  ##    #  #  #  #  #  #   #     #    #  #  ##    #
+    //  ##   #  #  ###    ##    ###  ###    ###  ###   ###    ###   ##   #
     /**
-     * Gets a new DiscordJs MessageEmbed object.
-     * @param {DiscordJs.MessageEmbedOptions} [options] The options to pass.
-     * @returns {DiscordJs.MessageEmbed} The MessageEmbed object.
+     * Gets a new DiscordJs EmbedBuilder object.
+     * @param {DiscordJs.EmbedData} [options] The options to pass.
+     * @returns {DiscordJs.EmbedBuilder} The EmbedBuilder object.
      */
-    static messageEmbed(options) {
-        return new DiscordJs.MessageEmbed(options);
+    static embedBuilder(options) {
+        return new DiscordJs.EmbedBuilder(options);
     }
 
     //        #          #      ##
@@ -294,7 +299,7 @@ class Discord {
     //                            #
     /**
      * Queues a rich embed message to be sent.
-     * @param {DiscordJs.MessageEmbed} embed The message to be sent.
+     * @param {DiscordJs.EmbedBuilder} embed The message to be sent.
      * @param {DiscordJs.TextChannel|DiscordJs.DMChannel|DiscordJs.GuildMember} channel The channel to send the message to.
      * @returns {Promise<DiscordJs.Message>} A promise that resolves with the sent message.
      */
@@ -303,27 +308,27 @@ class Discord {
             return void 0;
         }
 
-        embed.setFooter(embed.footer ? embed.footer.text : "", Discord.icon);
+        embed.setFooter({text: embed.data && embed.data.footer ? embed.data.footer.text : "Noita Nemesis Nation", iconURL: Discord.icon});
 
-        if (embed && embed.fields) {
-            embed.fields.forEach((field) => {
+        if (embed && embed.data && embed.data.fields) {
+            embed.data.fields.forEach((field) => {
                 if (field.value && field.value.length > 1024) {
                     field.value = field.value.substring(0, 1024);
                 }
             });
         }
 
-        if (!embed.color) {
+        if (!embed.data || !embed.data.color) {
             embed.setColor(0x5c9bbf);
         }
 
-        if (!embed.timestamp) {
+        if (!embed.data || !embed.data.timestamp) {
             embed.setTimestamp(new Date());
         }
 
         let msg;
         try {
-            const msgSend = await channel.send("", embed);
+            const msgSend = await channel.send({embeds: [embed]});
 
             if (msgSend instanceof Array) {
                 msg = msgSend[0];
@@ -343,27 +348,27 @@ class Discord {
     /**
      * Edits a rich embed message.
      * @param {DiscordJs.Message} message The posted message to edit.
-     * @param {DiscordJs.MessageEmbed} embed The message to change the posted message to.
+     * @param {DiscordJs.EmbedBuilder} embed The message to change the posted message to.
      * @returns {Promise} A promise that resolves when the message is edited.
      */
     static async richEdit(message, embed) {
-        embed.setFooter(embed.footer ? embed.footer.text : "", Discord.icon);
+        embed.setFooter({text: embed.data && embed.data.footer ? embed.data.footer.text : "", iconURL: Discord.icon});
 
-        if (embed && embed.fields) {
-            embed.fields.forEach((field) => {
+        if (embed && embed.data && embed.data.fields) {
+            embed.data.fields.forEach((field) => {
                 if (field.value && field.value.length > 1024) {
                     field.value = field.value.substring(0, 1024);
                 }
             });
         }
 
-        embed.color = message.embeds[0].color;
+        embed.data.color = message.embeds[0].color;
 
-        if (!embed.timestamp) {
+        if (!embed.data || !embed.data.timestamp) {
             embed.setTimestamp(new Date());
         }
 
-        await message.edit("", embed);
+        await message.edit({embeds: [embed]});
     }
 
     //                          #           ##   #                             ##
@@ -375,16 +380,16 @@ class Discord {
     /**
      * Creates a new channel on the Discord server.
      * @param {string} name The name of the channel.
-     * @param {"category" | "text" | "voice"} type The type of channel to create.
+     * @param {DiscordJs.GuildChannelTypes} type The type of channel to create.
      * @param {DiscordJs.PermissionOverwrites[]|DiscordJs.ChannelCreationOverwrites[]} [overwrites] The permissions that should overwrite the default permission set.
      * @param {string} [reason] The reason the channel is being created.
-     * @returns {Promise<DiscordJs.TextChannel|DiscordJs.VoiceChannel|DiscordJs.CategoryChannel>} The created channel.
+     * @returns {Promise<DiscordJs.TextChannel|DiscordJs.NewsChannel|DiscordJs.StageChannel|DiscordJs.VoiceChannel|DiscordJs.CategoryChannel>} The created channel.
      */
     static createChannel(name, type, overwrites, reason) {
         if (!guild) {
             return void 0;
         }
-        return guild.channels.create(name, {type, permissionOverwrites: overwrites, reason});
+        return guild.channels.create({name, type, permissionOverwrites: overwrites, reason});
     }
 
     //                          #          ###         ##
@@ -395,15 +400,14 @@ class Discord {
     //  ##   #      ##    # #    ##   ##   #  #   ##   ###    ##
     /**
      * Creates a new role on the Discord server.
-     * @param {DiscordJs.RoleData} [data] The role data.
-     * @param {string} [reason] The reason the role is being created.
+     * @param {DiscordJs.CreateRoleOptions} data The role data.
      * @returns {Promise<DiscordJs.Role>} A promise that resolves with the created role.
      */
-    static createRole(data, reason) {
+    static createRole(data) {
         if (!guild) {
             return void 0;
         }
-        return guild.roles.create({data, reason});
+        return guild.roles.create(data);
     }
 
     //   #    #             #   ##   #                             ##    ###         ###      #
@@ -416,7 +420,7 @@ class Discord {
     /**
      * Finds a Discord channel by its ID.
      * @param {string} id The ID of the channel.
-     * @returns {DiscordJs.GuildChannel} The Discord channel.
+     * @returns {DiscordJs.GuildBasedChannel} The Discord channel.
      */
     static findChannelById(id) {
         if (!guild) {
@@ -435,7 +439,7 @@ class Discord {
     /**
      * Finds a Discord channel by its name.
      * @param {string} name The name of the channel.
-     * @returns {DiscordJs.GuildChannel} The Discord channel.
+     * @returns {DiscordJs.GuildBasedChannel} The Discord channel.
      */
     static findChannelByName(name) {
         if (!guild) {
@@ -536,7 +540,7 @@ class Discord {
         if (!guild) {
             return void 0;
         }
-        return /** @type {DiscordJs.TextChannel} */(guild.channels.cache.find((c) => c.name === name && c.type === "text")); // eslint-disable-line no-extra-parens
+        return /** @type {DiscordJs.TextChannel} */(guild.channels.cache.find((c) => c.name === name && c.type === DiscordJs.ChannelType.GuildText)); // eslint-disable-line no-extra-parens
     }
 
     //   #    #             #  #  #                     ###         ###      #
@@ -552,7 +556,7 @@ class Discord {
      * @returns {Promise<DiscordJs.User>} A promise that resolves with the user.
      */
     static findUserById(id) {
-        return discord.users.fetch(id, false);
+        return discord.users.fetch(id, {cache: false});
     }
 
     //              #    #  #

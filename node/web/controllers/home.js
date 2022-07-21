@@ -75,7 +75,7 @@ class Home extends RouterBase {
                 news = discordNews.map((m) => ({
                     displayName: m.member.displayName,
                     createdTimestamp: new Date(m.createdTimestamp),
-                    content: DiscordMarkdown.toHTML(m.content, {discordCallback: {user: (user) => `@${Discord.findGuildMemberById(user.id).displayName}`, channel: (channel) => `#${Discord.findChannelById(channel.id).name}`, role: (role) => `@${Discord.findRoleById(role.id).name}`, emoji: () => ""}})
+                    content: DiscordMarkdown.toHTML(m.content, {discordCallback: {user: (user) => `@${Discord.findGuildMemberById(user.id).displayName}`, channel: (channel) => `#${Discord.findChannelById(channel.id).name}`, role: (role) => `@${Discord.findRoleById(role.id).name}`}})
                 }));
             } catch (err) {
                 Log.error("There was an error while retrieving the Discord news.", {err});
@@ -89,7 +89,7 @@ class Home extends RouterBase {
             });
         }
 
-        res.status(200).send(Common.page(
+        res.status(200).send(await Common.page(
             "",
             {css: ["/css/home.css"]},
             HomeView.get({

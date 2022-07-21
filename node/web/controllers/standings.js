@@ -59,7 +59,7 @@ class Standings extends RouterBase {
             seasonList = await Season.getSeasonNumbers(),
             standings = await Player.getSeasonStandings(season);
 
-        res.status(200).send(Common.page(
+        res.status(200).send(await Common.page(
             "",
             {css: ["/css/standings.css"]},
             StandingsView.get({

@@ -58,7 +58,7 @@ class Matches extends RouterBase {
             {upcoming, totalCompleted} = await Challenge.getUpcomingAndCompletedCount(isNaN(season) ? seasonList[seasonList.length - 1] : season),
             completed = await Challenge.getMatchesBySeason(isNaN(season) ? seasonList[seasonList.length - 1] : season);
 
-        res.status(200).send(Common.page(
+        res.status(200).send(await Common.page(
             "",
             {css: ["/css/matches.css"], js: ["/views/matches/match.js", "/js/matches.js"]},
             MatchesView.get({

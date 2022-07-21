@@ -1,7 +1,4 @@
 /**
- * @typedef {import("discord.js").GuildMember} DiscordJs.GuildMember
- * @typedef {import("discord.js").TextChannel} DiscordJs.TextChannel
- * @typedef {import("discord.js").User} DiscordJs.User
  * @typedef {import("../../types/node/playerTypes").Player} PlayerTypes.Player
  */
 
@@ -9,6 +6,7 @@ const tz = require("timezone-js"),
     tzdata = require("tzdata"),
 
     Challenge = require("../models/challenge"),
+    DiscordJs = require("discord.js"),
     Player = require("../models/player"),
     pjson = require("../../package.json"),
     Rating = require("../models/rating"),
@@ -229,7 +227,7 @@ class Commands {
      * @returns {boolean} Whether the channel is on the correct server.
      */
     static checkChannelIsOnServer(channel) {
-        return channel.type === "text" && channel.guild.name === process.env.DISCORD_GUILD;
+        return channel.type === DiscordJs.ChannelType.GuildText && channel.guild.name === process.env.DISCORD_GUILD;
     }
 
     //       #                 #     #  #               ###                                  #
@@ -1168,7 +1166,7 @@ class Commands {
             return true;
         }
 
-        const msg = Discord.messageEmbed({
+        const msg = Discord.embedBuilder({
             title: "Noita Nemesis Nation Schedule",
             fields: []
         });
@@ -1178,7 +1176,7 @@ class Commands {
                 timezone = player ? player.timezone : process.env.DEFAULT_TIMEZONE;
 
             for (const [index, match] of matches.entries()) {
-                msg.addField(`${index === 0 ? "Upcoming Matches:\n" : ""}${match.challengingPlayerName} vs ${match.challengedPlayerName}`, `Begins at ${match.matchTime.toLocaleString("en-US", {timeZone: timezone, weekday: "short", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short"})}.`);
+                msg.addFields({name: `${index === 0 ? "Upcoming Matches:\n" : ""}${match.challengingPlayerName} vs ${match.challengedPlayerName}`, value: `Begins at ${match.matchTime.toLocaleString("en-US", {timeZone: timezone, weekday: "short", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short"})}.`});
             }
         } else {
             matches.forEach((match, index) => {
@@ -1189,9 +1187,9 @@ class Commands {
                     seconds = Math.floor(Math.abs(difference) / 1000 % 60);
 
                 if (difference > 0) {
-                    msg.addField(`${index === 0 ? "Upcoming Matches:\n" : ""}${match.challengingPlayerName} vs ${match.challengedPlayerName}`, `Begins in ${days > 0 ? `${days} day${days === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 ? `${hours} hour${hours === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 || minutes > 0 ? `${minutes} minute${minutes === 1 ? "" : "s"}, ` : ""}${`${seconds} second${seconds === 1 ? "" : "s"}`}.`);
+                    msg.addFields({name: `${index === 0 ? "Upcoming Matches:\n" : ""}${match.challengingPlayerName} vs ${match.challengedPlayerName}`, value: `Begins in ${days > 0 ? `${days} day${days === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 ? `${hours} hour${hours === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 || minutes > 0 ? `${minutes} minute${minutes === 1 ? "" : "s"}, ` : ""}${`${seconds} second${seconds === 1 ? "" : "s"}`}.`});
                 } else {
-                    msg.addField(`${index === 0 ? "Upcoming Matches:\n" : ""}${match.challengingPlayerName} vs ${match.challengedPlayerName}`, `Began ${days > 0 ? `${days} day${days === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 ? `${hours} hour${hours === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 || minutes > 0 ? `${minutes} minute${minutes === 1 ? "" : "s"}, ` : ""}${`${seconds} second${seconds === 1 ? "" : "s"}`} ago.`);
+                    msg.addFields({name: `${index === 0 ? "Upcoming Matches:\n" : ""}${match.challengingPlayerName} vs ${match.challengedPlayerName}`, value: `Began ${days > 0 ? `${days} day${days === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 ? `${hours} hour${hours === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 || minutes > 0 ? `${minutes} minute${minutes === 1 ? "" : "s"}, ` : ""}${`${seconds} second${seconds === 1 ? "" : "s"}`} ago.`});
                 }
             });
         }
@@ -1228,7 +1226,7 @@ class Commands {
             return true;
         }
 
-        const msg = Discord.messageEmbed({
+        const msg = Discord.embedBuilder({
             title: `Noita Nemesis Nation Schedule for ${member.displayName}`,
             fields: []
         });
@@ -1238,7 +1236,7 @@ class Commands {
                 timezone = player ? player.timezone : process.env.DEFAULT_TIMEZONE;
 
             for (const [index, match] of matches.entries()) {
-                msg.addField(`${index === 0 ? "Upcoming Matches:\n" : ""}${match.challengingPlayerName} vs ${match.challengedPlayerName}`, `Begins at ${match.matchTime.toLocaleString("en-US", {timeZone: timezone, weekday: "short", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short"})}.`);
+                msg.addFields({name: `${index === 0 ? "Upcoming Matches:\n" : ""}${match.challengingPlayerName} vs ${match.challengedPlayerName}`, value: `Begins at ${match.matchTime.toLocaleString("en-US", {timeZone: timezone, weekday: "short", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short"})}.`});
             }
         } else {
             matches.forEach((match, index) => {
@@ -1249,9 +1247,9 @@ class Commands {
                     seconds = Math.floor(Math.abs(difference) / 1000 % 60);
 
                 if (difference > 0) {
-                    msg.addField(`${index === 0 ? "Upcoming Matches:\n" : ""}${match.challengingPlayerName} vs ${match.challengedPlayerName}`, `Begins in ${days > 0 ? `${days} day${days === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 ? `${hours} hour${hours === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 || minutes > 0 ? `${minutes} minute${minutes === 1 ? "" : "s"}, ` : ""}${`${seconds} second${seconds === 1 ? "" : "s"}`}.`);
+                    msg.addFields({name: `${index === 0 ? "Upcoming Matches:\n" : ""}${match.challengingPlayerName} vs ${match.challengedPlayerName}`, value: `Begins in ${days > 0 ? `${days} day${days === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 ? `${hours} hour${hours === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 || minutes > 0 ? `${minutes} minute${minutes === 1 ? "" : "s"}, ` : ""}${`${seconds} second${seconds === 1 ? "" : "s"}`}.`});
                 } else {
-                    msg.addField(`${index === 0 ? "Upcoming Matches:\n" : ""}${match.challengingPlayerName} vs ${match.challengedPlayerName}`, `Began ${days > 0 ? `${days} day${days === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 ? `${hours} hour${hours === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 || minutes > 0 ? `${minutes} minute${minutes === 1 ? "" : "s"}, ` : ""}${`${seconds} second${seconds === 1 ? "" : "s"}`} ago.`);
+                    msg.addFields({name: `${index === 0 ? "Upcoming Matches:\n" : ""}${match.challengingPlayerName} vs ${match.challengedPlayerName}`, value: `Began ${days > 0 ? `${days} day${days === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 ? `${hours} hour${hours === 1 ? "" : "s"}, ` : ""}${days > 0 || hours > 0 || minutes > 0 ? `${minutes} minute${minutes === 1 ? "" : "s"}, ` : ""}${`${seconds} second${seconds === 1 ? "" : "s"}`} ago.`});
                 }
             });
         }
@@ -1320,7 +1318,7 @@ class Commands {
             throw err;
         }
 
-        await Discord.richQueue(Discord.messageEmbed({
+        await Discord.richQueue(Discord.embedBuilder({
             title: `Stats for ${statsMember.displayName} for season ${stats.season}`,
             description: `Rank ${rating.rank}\nRating ${rating.rating}\n${stats.games} Game${stats.games === 1 ? "" : "s"}`,
             fields: [
