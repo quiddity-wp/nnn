@@ -117,7 +117,7 @@ class Discord {
             Log.error("Disconnected from Discord.", {err: ev instanceof Error ? ev : new Error(util.inspect(ev))});
         });
 
-        discord.on("message", (message) => {
+        discord.on("messageCreate", (message) => {
             Discord.message(message.author, message.content, message.channel);
         });
 
@@ -200,7 +200,7 @@ class Discord {
      * Parses a message.
      * @param {DiscordJs.User} user The user who sent the message.
      * @param {string} message The text of the message.
-     * @param {DiscordJs.TextChannel|DiscordJs.DMChannel|DiscordJs.NewsChannel} channel The channel the message was sent on.
+     * @param {DiscordJs.TextBasedChannel} channel The channel the message was sent on.
      * @returns {Promise} A promise that resolves when the message is parsed.
      */
     static async message(user, message, channel) {
