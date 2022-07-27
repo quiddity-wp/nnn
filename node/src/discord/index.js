@@ -13,7 +13,8 @@ const DiscordJs = require("discord.js"),
             DiscordJs.GatewayIntentBits.Guilds,
             DiscordJs.GatewayIntentBits.GuildMembers,
             DiscordJs.GatewayIntentBits.GuildMessages,
-            DiscordJs.GatewayIntentBits.GuildPresences
+            DiscordJs.GatewayIntentBits.GuildPresences,
+            DiscordJs.GatewayIntentBits.MessageContent
         ]
     }),
     messageParse = /^!(?<cmd>[^ ]+)(?: +(?<args>.*[^ ]))? *$/;
