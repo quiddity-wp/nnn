@@ -27,7 +27,7 @@
         "express": "4.18.2",
         "hot-router": "1.0.1",
         "html-minifier-terser": "7.0.0",
-        "mongodb": "4.11.0",
+        "mongodb": "4.12.0",
         "timezone-js": "0.4.13",
         "tzdata": "1.0.35"
     },
