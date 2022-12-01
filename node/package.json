@@ -29,7 +29,7 @@
         "html-minifier-terser": "7.1.0",
         "mongodb": "4.12.1",
         "timezone-js": "0.4.13",
-        "tzdata": "1.0.35"
+        "tzdata": "1.0.36"
     },
     "devDependencies": {
         "@babel/core": "7.20.5",
