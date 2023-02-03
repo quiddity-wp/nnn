@@ -42,7 +42,7 @@ class LinksView {
                 </div>
                 <div class="section font-pixel-huge">Fan Sites</div>
                 <div>
-                    Noita Wiki: <a href="https://noita.gamepedia.com/Noita_Wiki" target="_blank">https://noita.gamepedia.com/Noita_Wiki</a><br />
+                    Noita Wiki: <a href="https://noita.wiki.gg/wiki/Noita_Wiki" target="_blank">https://noita.wiki.gg/wiki/Noita_Wiki</a><br />
                     Noita Subreddit: <a href="https://www.reddit.com/r/noita/" target="_blank">https://www.reddit.com/r/noita/</a><br />
                 </div>
             </div>
